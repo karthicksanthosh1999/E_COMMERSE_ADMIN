@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 function AuthProvider({children}: { children: ReactNode }) {
     const queryClient = new QueryClient()
@@ -9,6 +10,7 @@ function AuthProvider({children}: { children: ReactNode }) {
     <>
         <QueryClientProvider client={queryClient}>
           {children}
+          <Toaster position="top-right" />
         </QueryClientProvider>
     </>
   )

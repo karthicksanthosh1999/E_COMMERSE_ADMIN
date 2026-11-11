@@ -20,6 +20,7 @@ import api from "@/lib/axios";
 import { ChangeEventHandler, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { ILoginUser } from "@/types/users";
 
 export function LoginForm({
   className,
@@ -28,8 +29,7 @@ export function LoginForm({
 
   const route = useRouter()
 
-  const [loginData, setLoginData] = useState<ILoginUser>({ email:"", password:"" });
-
+  const [loginData, setLoginData] = useState<ILoginUser>({ email:"", passwordHash:"" });
 
     const handleChange:ChangeEventHandler<HTMLInputElement> = (event) => {
       const { value, name } = event.target;
@@ -38,16 +38,16 @@ export function LoginForm({
 
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      const { data } = await api.post("/api/auth/login",loginData);
-      if(data?.success === true){
-        route.push("/dashboard")
-        toast.success(`Welcome Back ${data?.data?.name}`)
+      event.preventDefault();
+      try {
+        const { data } = await api.post("/api/auth/login",{...loginData, password: loginData.passwordHash});
+        if(data?.statusCode === 200){
+          route.push("/dashboard")
+          toast.success(`Welcome Back ${data?.data?.name ?? 'N/A'}`)
+        }
+      } catch (error) {
+        console.error("LOGIN ERROR:", error);
       }
-    } catch (error) {
-      console.error("LOGIN ERROR:", error);
-    }
   };
 
   return (
@@ -69,7 +69,7 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
-                             name="email"
+                  name="email"
                   value={loginData?.email}
                   onChange={handleChange}
                 />
@@ -85,13 +85,13 @@ export function LoginForm({
                   </Link>
                 </div>
                 <Input 
-                  id="password" 
+                  id="passwordHash" 
                   type="password" 
                   placeholder="******" 
                   required 
-                  name="password"
+                  name="passwordHash"
                   className="rounded-sm"
-                  value={loginData?.password}
+                  value={loginData?.passwordHash}
                   onChange={handleChange}
                   />
               </Field>

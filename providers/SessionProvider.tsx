@@ -49,7 +49,6 @@ export const SessionProvider = ({
     const fetchLoggedUser = async () => {
       try {
         const response = await api.get("/api/auth/me");
-
         if (!ignore) {
           setUser(response?.data?.data ?? null);
         }
@@ -76,11 +75,8 @@ export const SessionProvider = ({
   const logOut = async () => {
     try {
       await api.post("/api/auth/logout");
-
       setUser(null);
-
       toast.success("User Logout Successfully");
-
       push("/");
     } catch (error) {
       console.log("Logout failed:", error);
