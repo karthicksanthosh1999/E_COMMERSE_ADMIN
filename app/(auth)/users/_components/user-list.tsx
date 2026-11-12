@@ -1,27 +1,18 @@
-import React from 'react'
+'use client';
 
-import { User } from '@/types/users';
-import UserHeader from './user-header';
 import { UserTable } from './user-table';
 import { UserColumns } from './user-column';
+import { useGetAllUsers } from '../services/user.service';
 
 const UserList = () => {
 
-    const data: User[] = [
-        {
-            id:'1',
-            email:"karthick.santhosh@gmail.com",
-            name:"Joseph Karthick",
-            phone:"855236948",
-            role: 'ADMIN',
-            status:"ACTIVE",
-            createdAt:"2026-12-23"
-        }
-    ]
+    const { data, isLoading } = useGetAllUsers();
 
   return (
     <div>
-        <UserTable columns={UserColumns} data={data} />
+        {
+            data &&  <UserTable columns={UserColumns} data={data} isLoading={isLoading} />
+        }
     </div>
   )
 }

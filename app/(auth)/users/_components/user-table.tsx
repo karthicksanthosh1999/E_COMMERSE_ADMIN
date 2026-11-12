@@ -1,6 +1,8 @@
-"use client"
 
-import { useTable, type ColumnDef, type RowData } from "@tanstack/react-table"
+"use client";
+
+import { useTable, type ColumnDef, type RowData } from "@tanstack/react-table";
+
 import {
   Table,
   TableBody,
@@ -8,44 +10,60 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+
 import { features, type DataTableFeatures } from "@/components/data-table-features";
+import { DataTableSkeleton } from "@/components/DataTableSkeleton";
 
 interface DataTableProps<TData extends RowData> {
-  columns: ColumnDef<DataTableFeatures, TData>[]
-  data: TData[]
+  columns: ColumnDef<DataTableFeatures, TData>[];
+  data: TData[];
+  isLoading: boolean;
 }
 
 export function UserTable<TData extends RowData>({
   columns,
   data,
+  isLoading,
 }: DataTableProps<TData>) {
+
   const table = useTable({
     features,
     data,
     columns,
-  })
+  });
+
+  if (isLoading) {
+    return (
+      <DataTableSkeleton
+        columns={columns.length}
+        rows={10}
+      />
+    );
+  }
 
   return (
     <div className="overflow-hidden rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow className="bg-brand-gold-dark hover:bg-brand-gold-dark " key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : (
-                      <table.FlexRender header={header} />
-                    )}
-                  </TableHead>
-                )
-              })}
+            <TableRow
+              className="bg-brand-gold-dark hover:bg-brand-gold-dark"
+              key={headerGroup.id}
+            >
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : <table.FlexRender header={header} />}
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
+
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
@@ -61,7 +79,10 @@ export function UserTable<TData extends RowData>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center"
+              >
                 No results.
               </TableCell>
             </TableRow>
@@ -69,5 +90,5 @@ export function UserTable<TData extends RowData>({
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

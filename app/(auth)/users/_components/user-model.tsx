@@ -69,7 +69,7 @@ const UserModel = ({
       name: "",
       email: "",
       phone: "",
-      password: "",
+      passwordHash: "",
       role: ROLE.USER,
       status: USER_STATUS.ACTIVE,
     },
@@ -84,7 +84,7 @@ const UserModel = ({
   const onSubmit = async (values: CreateUserDto) => {
     try {
       if (mode === "CREATE") {
-        if (!values.password) {
+        if (!values.passwordHash) {
           // The schema allows an empty password for UPDATE.
           // CREATE must always provide one.
           return;
@@ -92,16 +92,16 @@ const UserModel = ({
 
         await createMutation.mutateAsync({
           ...values,
-          password: values.password,
+          passwordHash: values.passwordHash,
         });
 
       } else {
         if (!user?.id) return;
 
-        const { password, ...rest } = values;
+        const { passwordHash, ...rest } = values;
 
-        const payload = password
-          ? { ...rest, password }
+        const payload = passwordHash
+          ? { ...rest, passwordHash }
           : rest;
 
         await updateMutation.mutateAsync({
@@ -208,7 +208,7 @@ const UserModel = ({
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter password"
                   className="pr-10"
-                  {...register("password")}
+                  {...register("passwordHash")}
                 />
 
                 <Button
@@ -225,9 +225,9 @@ const UserModel = ({
                 </Button>
               </div>
 
-              {errors.password && (
+              {errors.passwordHash && (
                 <p className="text-sm text-destructive">
-                  {errors.password.message}
+                  {errors.passwordHash.message}
                 </p>
               )}
             </div>

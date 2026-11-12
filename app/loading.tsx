@@ -1,59 +1,55 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 export default function Loading() {
   const [progress, setProgress] = useState(0);
 
-  // Simulate loading progress
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-          }, 500);
-          return 100;
-        }
-        return prev + 1.5;
-      });
-    }, 35);
-
-    return () => clearInterval(interval);
+  // Generate particles only once
+  const particles = useMemo(() => {
+    return Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      width: Math.random() * 3 + 1,
+      height: Math.random() * 3 + 1,
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      duration: Math.random() * 3 + 2,
+      delay: Math.random() * 2,
+    }));
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#380004] via-[#5a0008] to-[#1a0002] flex flex-col items-center justify-center text-[#FFD700] font-serif select-none p-4">
+    <div className="relative min-h-screen w-full overflow-hidden bg-linear-to-br from-[#380004] via-[#5a0008] to-[#1a0002] flex flex-col items-center justify-center text-[#FFD700] font-serif select-none p-4">
       {/* Background radial glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#800020]/40 via-transparent to-black/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-linear(circle_at_center,_var(--tw-linear-stops))] from-[#800020]/40 via-transparent to-black/80 pointer-events-none" />
       
       {/* Decorative ambient particles / stars */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute bg-[#FFD700] rounded-full"
-            style={{
-              width: Number(Math.random()) * 3 + 1 + 'px',
-              height: Number(Math.random()) * 3 + 1 + 'px',
-              top: Number(Math.random()) * 100 + '%',
-              left: Number(Math.random()) * 100 + '%',
-            }}
-            animate={{
-              opacity: [0.2, 1, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </div>
+  <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+    {particles.map((particle) => (
+      <motion.div
+        key={particle.id}
+        className="absolute bg-[#FFD700] rounded-full"
+        style={{
+          width: `${particle.width}px`,
+          height: `${particle.height}px`,
+          top: `${particle.top}%`,
+          left: `${particle.left}%`,
+        }}
+        animate={{
+          opacity: [0.2, 1, 0.2],
+          scale: [1, 1.5, 1],
+        }}
+        transition={{
+          duration: particle.duration,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          delay: particle.delay,
+        }}
+      />
+    ))}
+  </div>
 
       <AnimatePresence mode="wait">
           {/* ================= LOADING SCREEN ================= */ }
