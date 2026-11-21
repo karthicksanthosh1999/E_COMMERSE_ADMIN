@@ -4,10 +4,15 @@ import { useSession } from '@/providers/SessionProvider';
 import { Bell } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 const Header = () => {
     const { user } = useSession();
-    console.log('user', user)
+    useEffect(()=>{
+        if(user){
+            console.log(user)
+        }
+    },[])
   return (
       <div className="flex items-center justify-between w-full">
         <div>

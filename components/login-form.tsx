@@ -40,10 +40,10 @@ export function LoginForm({
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       try {
-        const { data } = await api.post("/api/auth/login",{...loginData, password: loginData.passwordHash});
-        if(data?.statusCode === 200){
+        const { data } = await api.post("/auth/login",{...loginData, password: loginData.passwordHash});
+        if(data.success === true){
           route.push("/dashboard")
-          toast.success(`Welcome Back ${data?.data?.name ?? 'N/A'}`)
+          toast.success(`Welcome Back ${data?.data?.user?.name ?? 'N/A'}`)
         }
       } catch (error) {
         console.error("LOGIN ERROR:", error);

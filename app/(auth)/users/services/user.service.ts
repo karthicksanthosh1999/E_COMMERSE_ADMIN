@@ -61,21 +61,22 @@ export const useUpdateUser = () => {
 
 
 export const getAllUsers = async (): Promise<User[]> => {
-  const response = await api.get("/api/users");
+  const response = await api.get("/admin/users");
+  console.log("Users", response.data?.data)
   return response.data.data;
 };
 
 export const createUser = async (data: CreateUserDto) => {
-  const response = await api.post("/api/users", data);
+  const response = await api.post("/admin/users", data);
   return response.data;
 };
 
 export const updateUser = async ({ id, data}: { id: string; data: UpdateUserDto }) => {
-  const response = await api.patch(`/api/users/${id}`, data);
+  const response = await api.patch(`/admin/users/${id}`, data);
   return response.data;
 };
 
 export const deleteUser = async (id: string) => {
-  const response = await api.delete(`/api/users/${id}`);
+  const response = await api.delete(`/admin/users/${id}`);
   return response.data;
 };

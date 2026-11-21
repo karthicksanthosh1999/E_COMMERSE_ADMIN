@@ -10,12 +10,13 @@ import {
   useState,
 } from "react";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  mobileNo: string;
+  phone: string;
   role: string;
   createdAt: string;
   image?: string;
@@ -28,56 +29,55 @@ interface SessionContextType {
   logOut: () => Promise<void>;
 }
 
-export const SessionContext =
-  createContext<SessionContextType | undefined>(
-    undefined
-  );
+export const SessionContext = createContext<SessionContextType | undefined>(
+  undefined
+);
 
 export const SessionProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
-  const { push } = useRouter();
+  const router = useRouter();
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let ignore = false;
-
     const fetchLoggedUser = async () => {
       try {
-        const response = await api.get("/api/auth/me");
-        if (!ignore) {
-          setUser(response?.data?.data ?? null);
-        }
-      } catch (error) {
-        if (!ignore) {
+        const response = await api.post("/auth/refresh");
+
+        const loggedUser = response.data?.data?.user;
+
+        if (loggedUser) {
+          setUser(loggedUser);
+        } else {
           setUser(null);
         }
-
-        console.log("Session check failed:", error);
-      } finally {
-        if (!ignore) {
-          setLoading(false);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log("Status:", error.response?.status);
+          console.log("Response:", error.response?.data);
+          console.log("URL:", error.config?.url);
         }
+
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchLoggedUser();
-
-    return () => {
-      ignore = true;
-    };
   }, []);
 
   const logOut = async () => {
     try {
-      await api.post("/api/auth/logout");
+      await api.post("/auth/logout");
+
       setUser(null);
       toast.success("User Logout Successfully");
-      push("/");
+      router.push("/");
     } catch (error) {
       console.log("Logout failed:", error);
     }
@@ -101,9 +101,7 @@ export const useSession = () => {
   const session = useContext(SessionContext);
 
   if (!session) {
-    throw new Error(
-      "useSession must be used inside SessionProvider"
-    );
+    throw new Error("useSession must be used inside SessionProvider");
   }
 
   return session;
