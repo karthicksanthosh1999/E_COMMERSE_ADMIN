@@ -56,12 +56,8 @@ const data = {
       ),
       items: [
         {
-          title: "Dresses",
-          url: "#",
-        },
-        {
-          title: "Snacks",
-          url: "#",
+          title: "Categories List",
+          url: "/categories",
         }
       ],
     },

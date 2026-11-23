@@ -3,16 +3,19 @@
 import { useSession } from '@/providers/SessionProvider';
 import { Bell } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
-    const { user } = useSession();
-    useEffect(()=>{
-        if(user){
-            console.log(user)
-        }
-    },[])
+    const { user, logOut } = useSession();
+    const { push } = useRouter()
   return (
       <div className="flex items-center justify-between w-full">
         <div>
@@ -23,13 +26,31 @@ const Header = () => {
                 <Bell size={20} />
                 <span className='h-fit w-fit rounded-full bg-primary text-[11px] p-0.5 absolute -top-2 -right-2 font-semibold'>20</span>
             </div>
-            <Link href={'/profile'} className='flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2'>
+
+            <DropdownMenu>
+                <DropdownMenuTrigger render={(
+                            <div className='flex items-center gap-3 cursor-pointer hover:bg-gray-100 p-2'>
                 <Image src={'https://stroyka-admin.html.themeforest.scompiler.ru/variants/ltr/images/customers/customer-4-64x64.jpg'} alt="" height={40} width={40} />
                 <div className="">
                     <h4 className='text-[15px] font-semibold capitalize'>{user?.name ?? 'N/A'}</h4>
                     <p className='text-xs text-gray-400'>{user?.email ?? "N/A"}</p>
                 </div>
-            </Link>
+            </div>
+                )}>
+                    Open
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuGroup>
+                    <DropdownMenuItem className={'cursor-pointer'} onClick={()=>push("/profile")}>My Account</DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                    <DropdownMenuItem className={'cursor-pointer'} onClick={logOut}>Logout</DropdownMenuItem>
+                    </DropdownMenuGroup>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+
         </div>
       </div>
   )

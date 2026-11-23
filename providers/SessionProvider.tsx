@@ -47,9 +47,7 @@ export const SessionProvider = ({
     const fetchLoggedUser = async () => {
       try {
         const response = await api.post("/auth/refresh");
-
         const loggedUser = response.data?.data?.user;
-
         if (loggedUser) {
           setUser(loggedUser);
         } else {
@@ -61,7 +59,6 @@ export const SessionProvider = ({
           console.log("Response:", error.response?.data);
           console.log("URL:", error.config?.url);
         }
-
         setUser(null);
       } finally {
         setLoading(false);
@@ -74,7 +71,6 @@ export const SessionProvider = ({
   const logOut = async () => {
     try {
       await api.post("/auth/logout");
-
       setUser(null);
       toast.success("User Logout Successfully");
       router.push("/");
